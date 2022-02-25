@@ -16,6 +16,13 @@ class CustomLifecycleChronometer(
     private var chronometerCountingJob: Job? = null
     private var currentDuration: Long = 0
 
+    private var _chronometerPeriod: Long = DEFAULT_CHRONOMETER_PERIOD
+    var chronometerPeriod: Long
+        get() = _chronometerPeriod
+        set(value) {
+            _chronometerPeriod = value
+        }
+
     fun startChronometer() {
         lifecycleOwner.lifecycleScope.launch {
             lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -83,14 +90,14 @@ class CustomLifecycleChronometer(
         chronometerCountingJob?.cancel()
         chronometerCountingJob = lifecycleOwner.lifecycleScope.launch {
             while (true) {
-                currentDuration += CHRONOMETER_PERIOD
+                currentDuration += chronometerPeriod
                 listener.onChronometerChanged(currentDuration)
-                delay(CHRONOMETER_PERIOD)
+                delay(chronometerPeriod)
             }
         }
     }
 
     companion object {
-        private const val CHRONOMETER_PERIOD = 25L
+        private const val DEFAULT_CHRONOMETER_PERIOD = 25L
     }
 }
