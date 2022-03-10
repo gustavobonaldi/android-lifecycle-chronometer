@@ -11,7 +11,12 @@ import com.example.myapplication.databinding.MainFragmentBinding
 
 class MainFragment : Fragment(), LifecycleChronometerListener {
     private lateinit var binding: MainFragmentBinding
-    private var timer: CustomLifecycleChronometer? = null
+    private val timer: CustomLifecycleChronometer by lazy {
+        CustomLifecycleChronometer(
+            viewLifecycleOwner,
+            this
+        )
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -23,46 +28,36 @@ class MainFragment : Fragment(), LifecycleChronometerListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        startTimer()
+        timer.startChronometer()
         setupViews()
-    }
-
-    private fun startTimer() {
-        if (timer == null) {
-            timer = CustomLifecycleChronometer(
-                viewLifecycleOwner,
-                this
-            )
-        }
-        timer?.startChronometer()
     }
 
     private fun setupViews() = binding.apply {
         btnFinish.setOnClickListener {
-            timer?.finishChronometer()
+            timer.finishChronometer()
         }
 
         btnPause.setOnClickListener {
-            timer?.pauseChronometer()
+            timer.pauseChronometer()
         }
 
         btnPlay.setOnClickListener {
-            timer?.resumeChronometer()
+            timer.resumeChronometer()
         }
 
         btnCleanUp.setOnClickListener {
-            timer?.cleanUp()
+            timer.cleanUp()
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        timer?.finishChronometer()
+        timer.finishChronometer()
     }
 
     override fun onPause() {
         super.onPause()
-        timer?.pauseChronometer()
+        timer.pauseChronometer()
     }
 
     override fun onChronometerChanged(timeInMillis: Long) {

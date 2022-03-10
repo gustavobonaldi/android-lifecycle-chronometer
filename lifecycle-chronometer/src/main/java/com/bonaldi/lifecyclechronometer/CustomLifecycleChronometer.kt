@@ -89,7 +89,7 @@ class CustomLifecycleChronometer(
     private fun resumeJobCounting() {
         chronometerCountingJob?.cancel()
         chronometerCountingJob = lifecycleOwner.lifecycleScope.launch {
-            while (true) {
+            while (chronometerState == ChronometerState.RESUMED) {
                 currentDuration += chronometerPeriod
                 listener.onChronometerChanged(currentDuration)
                 delay(chronometerPeriod)
